@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dogecoin Hashing Demo | Blockchain Visualization</title>
+  <meta name="description" content="An interactive demonstration of how Dogecoin uses cryptographic hashing to secure blockchain transactions. Explore the Avalanche Effect and blockchain integrity checks." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-layer">
+    <div class="floating-coin" id="coin1">Ð</div>
+    <div class="floating-coin" id="coin2">Ð</div>
+    <div class="floating-coin" id="coin3">Ð</div>
+    <div class="floating-coin" id="coin4">Ð</div>
+    <div class="floating-coin" id="coin5">Ð</div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="doge-logo">
+      <span class="doge-symbol">Ð</span>
+    </div>
+    <h1 class="hero-title">Dogecoin Hashing Demo</h1>
+    <p class="hero-subtitle">
+      Demonstrating how a small input change creates a completely different hash value — securing every DOGE transaction on the blockchain.
+    </p>
+    <div class="hero-badges">
+      <span class="badge">Scrypt Algorithm</span>
+      <span class="badge">SHA-256 Simulation</span>
+      <span class="badge">Avalanche Effect</span>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- Section 1: Transaction + Integrity Check -->
+    <section class="card glass-card" id="transaction-section">
+      <div class="card-grid">
+
+        <!-- Left: Transaction Block -->
+        <div class="transaction-block">
+          <h2 class="section-title">
+            <span class="title-icon">📦</span> Transaction Block
+          </h2>
+          <p class="section-desc">Fill in transaction details to generate a cryptographic hash.</p>
+
+          <div class="form-group">
+            <label for="sender" class="form-label">Sender Wallet</label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input type="text" id="sender" class="form-input" placeholder="e.g. Alice" value="Alice" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="receiver" class="form-label">Receiver Wallet</label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input type="text" id="receiver" class="form-input" placeholder="e.g. Bob" value="Bob" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="amount" class="form-label">Amount (DOGE)</label>
+            <div class="input-wrapper">
+              <span class="input-icon">Ð</span>
+              <input type="number" id="amount" class="form-input" placeholder="e.g. 420" value="420" min="0" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="nonce" class="form-label">Nonce (Block Number)</label>
+            <div class="input-wrapper">
+              <span class="input-icon">#</span>
+              <input type="number" id="nonce" class="form-input" placeholder="e.g. 1" value="1" min="0" />
+            </div>
+          </div>
+
+          <button id="generateBtn" class="btn-primary" onclick="generateAndStore()">
+            <span class="btn-icon">⚡</span>
+            Generate &amp; Store Hash
+          </button>
+        </div>
+
+        <!-- Right: Integrity Check -->
+        <div class="integrity-block">
+          <h2 class="section-title">
+            <span class="title-icon">🔐</span> Blockchain Integrity Check
+          </h2>
+          <p class="section-desc">Compare the stored block hash with the current transaction hash.</p>
+
+          <div class="hash-display-group">
+            <p class="hash-label">Stored Block Hash</p>
+            <div class="hash-box" id="storedHash">
+              <span class="hash-placeholder">Click "Generate &amp; Store Hash" to begin...</span>
+            </div>
+          </div>
+
+          <div class="hash-display-group">
+            <p class="hash-label">Current Transaction Hash</p>
+            <div class="hash-box" id="currentHash">
+              <span class="hash-placeholder">Waiting for input...</span>
+            </div>
+          </div>
+
+          <div id="integrityResult" class="integrity-result hidden">
+            <div class="result-icon"></div>
+            <span class="result-text"></span>
+          </div>
+
+          <div class="block-meta" id="blockMeta">
+            <div class="meta-item">
+              <span class="meta-key">Timestamp</span>
+              <span class="meta-val" id="metaTimestamp">—</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-key">Block Size</span>
+              <span class="meta-val" id="metaSize">—</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-key">Algorithm</span>
+              <span class="meta-val">Scrypt (simulated)</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 2: Avalanche Effect -->
+    <section class="card glass-card" id="avalanche-section">
+      <h2 class="section-title large">
+        <span class="title-icon">🌊</span> Live Avalanche Effect
+      </h2>
+      <p class="section-desc center">
+        Modify even a single character in the transaction and observe how the <strong>entire hash changes completely</strong>.
+      </p>
+
+      <div class="avalanche-grid">
+        <div class="avalanche-col">
+          <p class="col-label">Original Transaction</p>
+          <textarea id="originalText" class="avalanche-input" rows="4">Sender: Alice → Bob | 420 DOGE</textarea>
+          <div class="hash-box avalanche-hash" id="originalAvalancheHash">
+            <span class="hash-placeholder">—</span>
+          </div>
+          <div class="hash-meta-row">
+            <span class="hash-meta-label">Hash Length:</span>
+            <span id="originalHashLen" class="hash-meta-val">—</span>
+          </div>
+        </div>
+
+        <div class="avalanche-divider">
+          <div class="vs-circle">VS</div>
+          <div class="diff-line"></div>
+        </div>
+
+        <div class="avalanche-col">
+          <p class="col-label modified">Modified Transaction</p>
+          <textarea id="modifiedText" class="avalanche-input modified-input" rows="4">Sender: alice → Bob | 420 DOGE</textarea>
+          <div class="hash-box avalanche-hash modified-hash" id="modifiedAvalancheHash">
+            <span class="hash-placeholder">—</span>
+          </div>
+          <div class="hash-meta-row">
+            <span class="hash-meta-label">Hash Length:</span>
+            <span id="modifiedHashLen" class="hash-meta-val">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Similarity Meter -->
+      <div class="similarity-meter">
+        <div class="similarity-header">
+          <span>Hash Similarity</span>
+          <span id="similarityPct" class="similarity-pct">—</span>
+        </div>
+        <div class="meter-track">
+          <div class="meter-fill" id="meterFill"></div>
+        </div>
+        <p class="meter-note">Even a 1-character change produces ~0% hash similarity — this is the Avalanche Effect.</p>
+      </div>
+
+      <!-- Diff Highlight -->
+      <div class="diff-highlight" id="charDiffBox">
+        <p class="diff-title">Character Differences Detected:</p>
+        <p id="charDiffContent" class="diff-content">Modify the texts above to see differences highlighted.</p>
+      </div>
+
+      <!-- Info Box -->
+      <div class="info-box">
+        <p class="info-title">🌊 Avalanche Effect Explained:</p>
+        <p class="info-text">
+          Any small change in the transaction data — sender name, receiver name, amount, or even spacing — creates a
+          completely different hash value. This property is called the <strong>Avalanche Effect</strong> and helps
+          blockchain detect tampering immediately. In Dogecoin, even changing one byte in a block invalidates the entire chain from that point forward.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 3: Mining Simulation -->
+    <section class="card glass-card" id="mining-section">
+      <h2 class="section-title large">
+        <span class="title-icon">⛏️</span> Dogecoin Mining Simulator
+      </h2>
+      <p class="section-desc center">
+        Watch how miners find a valid nonce — a number that makes the hash start with a required number of zeros.
+      </p>
+
+      <div class="mining-grid">
+        <div class="mining-controls">
+          <div class="form-group">
+            <label class="form-label">Mining Data (Block Content)</label>
+            <input type="text" id="mineData" class="form-input" value="Alice→Bob:420DOGE" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Difficulty (leading zeros required)</label>
+            <div class="difficulty-row">
+              <input type="range" id="difficultySlider" min="1" max="4" value="2" class="slider" oninput="updateDifficulty(this.value)" />
+              <span id="difficultyDisplay" class="difficulty-val">2 zeros</span>
+            </div>
+            <div class="target-preview">Target: <span id="targetPreview" class="target-text">00...</span></div>
+          </div>
+          <button id="mineBtn" class="btn-primary" onclick="startMining()">
+            <span class="btn-icon">⛏️</span> Start Mining
+          </button>
+          <button id="stopBtn" class="btn-secondary hidden" onclick="stopMining()">
+            ⏹ Stop Mining
+          </button>
+        </div>
+
+        <div class="mining-output">
+          <div class="mining-stats">
+            <div class="stat-box">
+              <p class="stat-label">Nonces Tried</p>
+              <p class="stat-val" id="noncesTried">0</p>
+            </div>
+            <div class="stat-box">
+              <p class="stat-label">Hash Rate</p>
+              <p class="stat-val" id="hashRate">0/s</p>
+            </div>
+            <div class="stat-box">
+              <p class="stat-label">Time Elapsed</p>
+              <p class="stat-val" id="timeElapsed">0.00s</p>
+            </div>
+          </div>
+          <div class="mining-live">
+            <p class="live-label">Current Attempt:</p>
+            <div class="hash-box" id="miningLiveHash">
+              <span class="hash-placeholder">Press "Start Mining" to begin...</span>
+            </div>
+          </div>
+          <div id="miningResult" class="mining-result hidden">
+            <div class="result-found">
+              <span class="found-icon">🎉</span>
+              <div>
+                <p class="found-title">Valid Block Found!</p>
+                <p class="found-nonce">Winning Nonce: <span id="foundNonce" class="nonce-val">—</span></p>
+              </div>
+            </div>
+            <div class="hash-box valid-hash" id="foundHash"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-logo">Ð</div>
+    <p>Dogecoin Hashing Demo — Educational Blockchain Visualization</p>
+    <p class="footer-note">Hash functions simulated using SHA-256 (Web Crypto API). Not financial advice. Much wow. 🐕</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
